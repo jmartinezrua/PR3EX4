@@ -1,0 +1,72 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Create bin directory",
+      "type": "shell",
+      "command": "mkdir",
+      "args": [
+        "-p",
+        "${workspaceFolder}/bin"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "C: clang build project",
+      "type": "shell",
+      "command": "/usr/bin/clang",
+      "args": [
+        "-fdiagnostics-color=always",
+        "-g",
+        "-I${workspaceFolder}/include",
+        "-I${workspaceFolder}/test/include",
+        "-I${workspaceFolder}/UOCPlay/include",
+        "${workspaceFolder}/src/main.c",
+        "${workspaceFolder}/test/src/test_suite.c",
+        "${workspaceFolder}/test/src/test.c",
+        "${workspaceFolder}/test/src/test_pr1.c",
+        "${workspaceFolder}/test/src/test_pr2.c",
+        "${workspaceFolder}/test/src/test_pr3.c",
+        "${workspaceFolder}/UOCPlay/src/api.c",
+        "${workspaceFolder}/UOCPlay/src/csv.c",
+        "${workspaceFolder}/UOCPlay/src/date.c",
+        "${workspaceFolder}/UOCPlay/src/film.c",
+        "${workspaceFolder}/UOCPlay/src/person.c",
+        "${workspaceFolder}/UOCPlay/src/show.c",
+        "${workspaceFolder}/UOCPlay/src/subscription.c",
+        "${workspaceFolder}/UOCPlay/src/watchstack.c",
+        "-o",
+        "${workspaceFolder}/bin/UOC20242d"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": ["$gcc"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "dependsOn": ["Create bin directory"]
+    },
+    {
+      "label": "C: clang build active file",
+      "type": "shell",
+      "command": "/usr/bin/clang",
+      "args": [
+        "-fdiagnostics-color=always",
+        "-g",
+        "-I${workspaceFolder}/include",
+        "-I${workspaceFolder}/test/include",
+        "-I${workspaceFolder}/UOCPlay/include",
+        "${file}",
+        "-o",
+        "${fileDirname}/${fileBasenameNoExtension}"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": ["$gcc"],
+      "group": "build"
+    }
+  ]
+}
