@@ -330,10 +330,35 @@ tApiError freeFilmList_SortByYear_Bubble(tFreeFilmList* list) {
     if (list == NULL || list->first == NULL || list->first->next == NULL) {
         return E_SUCCESS;
     }
-    /////////////////////////////////
-    // PR3_1d (sorting logic to be implemented for non-empty lists)
-    /////////////////////////////////
-    return E_NOT_IMPLEMENTED;
+
+    bool swapped;
+    tFreeFilmListNode *ptr1;
+    tFreeFilmListNode *lptr = NULL;
+
+    do {
+        swapped = false;
+        ptr1 = list->first;
+        while (ptr1->next != lptr) {
+            // Swap if first date is later than second date (ascending order)
+            if (date_cmp(ptr1->elem->release, ptr1->next->elem->release) > 0) {
+                tFilm *temp = ptr1->elem;
+                ptr1->elem = ptr1->next->elem;
+                ptr1->next->elem = temp;
+                swapped = true;
+            }
+            ptr1 = ptr1->next;
+        }
+        lptr = ptr1;
+    } while (swapped);
+
+    // Update last pointer
+    tFreeFilmListNode *lastNode = list->first;
+    while (lastNode->next != NULL) {
+        lastNode = lastNode->next;
+    }
+    list->last = lastNode;
+
+    return E_SUCCESS;
 }
 
 // Sort a catalog of films by date

@@ -1,0 +1,6 @@
+{
+   ignore_test_pr3
+   Memcheck:Leak
+   ...
+   src:test_pr3.c
+}
