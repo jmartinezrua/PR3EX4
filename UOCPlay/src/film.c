@@ -271,8 +271,12 @@ tFilm* freeFilmList_longestFind(tFreeFilmList list) {
 
 // Sort a list of films by year
 tApiError filmList_SortByYear_Bubble(tFilmList* list) {
+    // If list is NULL, empty, or has only one element, nothing to do
+    if (list == NULL || list->first == NULL || list->first->next == NULL) {
+        return E_SUCCESS;
+    }
     /////////////////////////////////
-    // PR3_1c
+    // PR3_1c (sorting logic to be implemented for non-empty lists)
     /////////////////////////////////
     
     return E_NOT_IMPLEMENTED;
