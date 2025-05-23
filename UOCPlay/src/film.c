@@ -232,17 +232,23 @@ tFilm* filmList_find(tFilmList list, const char* name) {
 // Return a pointer to the longest film of the list
 tFilm* filmList_longestFind(tFilmList list) {
     if (list.first == NULL) {
+        printf("[TRACE] filmList_longestFind: list is empty\n");
         return NULL;
     }
     tFilmListNode *current = list.first;
     tFilm *longest = &current->elem;
+    printf("[TRACE] Start: longest='%s' duration=%02d:%02d\n", longest->name, longest->duration.hour, longest->duration.minutes);
     current = current->next;
     while (current != NULL) {
-        if (time_cmp(current->elem.duration, longest->duration) > 0) {
+        printf("[TRACE] Checking: '%s' duration=%02d:%02d\n", current->elem.name, current->elem.duration.hour, current->elem.duration.minutes);
+        // Update if greater or equal (to get the last with max duration)
+        if (time_cmp(current->elem.duration, longest->duration) >= 0) {
+            printf("[TRACE] New longest found: '%s'\n", current->elem.name);
             longest = &current->elem;
         }
         current = current->next;
     }
+    printf("[TRACE] Final longest: '%s' duration=%02d:%02d\n", longest->name, longest->duration.hour, longest->duration.minutes);
     return longest;
 }
 
