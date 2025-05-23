@@ -403,6 +403,10 @@ tFilm* filmCatalog_OldestFind (tFilmCatalog catalog, bool free) {
         if (catalog.filmList.first == NULL) {
             return NULL;
         }
+        // If sortedByDate, the first node is the oldest
+        if (catalog.sortedByDate) {
+            return &catalog.filmList.first->elem;
+        }
         tFilmListNode *current = catalog.filmList.first;
         tFilm *oldest = &current->elem;
         current = current->next;
@@ -416,6 +420,10 @@ tFilm* filmCatalog_OldestFind (tFilmCatalog catalog, bool free) {
     } else {
         if (catalog.freeFilmList.first == NULL) {
             return NULL;
+        }
+        // If sortedByDate, the first node is the oldest
+        if (catalog.sortedByDate) {
+            return catalog.freeFilmList.first->elem;
         }
         tFreeFilmListNode *current = catalog.freeFilmList.first;
         tFilm *oldest = current->elem;
