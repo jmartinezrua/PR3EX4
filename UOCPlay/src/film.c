@@ -378,7 +378,7 @@ tApiError filmCatalog_SortByYear(tFilmCatalog* catalog) {
     // Check preconditions
     assert(catalog != NULL);
     
-    // Set the sortedByDate flag to true
+    // Set the sortedByDate flag to true (even for empty catalogs)
     catalog->sortedByDate = true;
     
     // Sort the film list by year
@@ -396,13 +396,38 @@ tApiError filmCatalog_SortByYear(tFilmCatalog* catalog) {
     return E_SUCCESS;
 }
 
-// Return a pointer to the longest film of the catalog
+// Return a pointer to the oldest film of the catalog
 tFilm* filmCatalog_OldestFind (tFilmCatalog catalog, bool free) {
-    /////////////////////////////////
-    // PR3_1f
-    /////////////////////////////////
-    
-    return NULL;
+    // If free == false, search in filmList; if true, search in freeFilmList
+    if (!free) {
+        if (catalog.filmList.first == NULL) {
+            return NULL;
+        }
+        tFilmListNode *current = catalog.filmList.first;
+        tFilm *oldest = &current->elem;
+        current = current->next;
+        while (current != NULL) {
+            if (date_cmp(current->elem.release, oldest->release) < 0) {
+                oldest = &current->elem;
+            }
+            current = current->next;
+        }
+        return oldest;
+    } else {
+        if (catalog.freeFilmList.first == NULL) {
+            return NULL;
+        }
+        tFreeFilmListNode *current = catalog.freeFilmList.first;
+        tFilm *oldest = current->elem;
+        current = current->next;
+        while (current != NULL) {
+            if (date_cmp(current->elem->release, oldest->release) < 0) {
+                oldest = current->elem;
+            }
+            current = current->next;
+        }
+        return oldest;
+    }
 }
 
 // Sort a catalog of films by rating, higher to lower
@@ -550,29 +575,32 @@ tApiError film_catalog_add(tFilmCatalog* catalog, tFilm film) {
     /////////////////////////////////
     tApiError error;
     tFilm *auxFilm;
-    
+
     // Check preconditions
     assert(catalog != NULL);
-    
+
+    // Mark catalog as unsorted before any operation
+    catalog->sortedByDate = false;
+
     // Try to add the film to the catalog
     error = filmList_add(&(catalog->filmList), film);
-    
+
     // Get the film from the list if exist and if it is free
     if (film.isFree && error == E_SUCCESS && (auxFilm = filmList_find(catalog->filmList, film.name)) != NULL)
     {
         error = freeFilmList_add(&(catalog->freeFilmList), auxFilm);
-        
+
         // Revert if freeFilmList_add failed
         if (error != E_SUCCESS)
         {
             filmList_del(&(catalog->filmList), film.name);
         }
     }
-    
+
     /////////////////////////////////
     // PR3_1e
     /////////////////////////////////
-    
+
     return error;
     /////////////////////////////////
     // return E_NOT_IMPLEMENTED;
