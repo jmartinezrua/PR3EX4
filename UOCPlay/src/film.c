@@ -254,11 +254,19 @@ tFilm* filmList_longestFind(tFilmList list) {
 
 // Return a pointer to the longest film of the list
 tFilm* freeFilmList_longestFind(tFreeFilmList list) {
-    /////////////////////////////////
-    // PR3_1b
-    /////////////////////////////////
-    
-    return NULL;
+    if (list.first == NULL) {
+        return NULL;
+    }
+    tFreeFilmListNode *current = list.first;
+    tFilm *longest = current->elem;
+    current = current->next;
+    while (current != NULL) {
+        if (time_cmp(current->elem->duration, longest->duration) >= 0) {
+            longest = current->elem;
+        }
+        current = current->next;
+    }
+    return longest;
 }
 
 // Sort a list of films by year
