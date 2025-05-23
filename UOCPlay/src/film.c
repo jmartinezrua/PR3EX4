@@ -326,10 +326,13 @@ tApiError filmList_SortByYear_Bubble(tFilmList* list) {
 
 // Sort a list of free films by year
 tApiError freeFilmList_SortByYear_Bubble(tFreeFilmList* list) {
+    // If list is NULL, empty, or has only one element, nothing to do
+    if (list == NULL || list->first == NULL || list->first->next == NULL) {
+        return E_SUCCESS;
+    }
     /////////////////////////////////
-    // PR3_1d
+    // PR3_1d (sorting logic to be implemented for non-empty lists)
     /////////////////////////////////
-    
     return E_NOT_IMPLEMENTED;
 }
 
