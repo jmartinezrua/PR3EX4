@@ -231,17 +231,17 @@ tFilm* filmList_find(tFilmList list, const char* name) {
 
 // Return a pointer to the longest film of the list
 tFilm* filmList_longestFind(tFilmList list) {
-    tFilmListNode *node = list.first;
-    tFilm *longest = NULL;
-
-    while (node != NULL) {
-        if (longest == NULL ||
-            node->elem.duration.hour > longest->duration.hour ||
-            (node->elem.duration.hour == longest->duration.hour &&
-             node->elem.duration.minutes > longest->duration.minutes)) {
-            longest = &node->elem;
-             }
-        node = node->next;
+    if (list.first == NULL) {
+        return NULL;
+    }
+    tFilmListNode *current = list.first;
+    tFilm *longest = &current->elem;
+    current = current->next;
+    while (current != NULL) {
+        if (time_cmp(current->elem.duration, longest->duration) > 0) {
+            longest = &current->elem;
+        }
+        current = current->next;
     }
     return longest;
 }
@@ -339,30 +339,7 @@ tApiError freeFilmList_init(tFreeFilmList* list) {
 }
 
 // Add a new free film to the list
-tApiError freeFilmList_add(tFreeFilmList* list, tFilm* film) {
-    // Check preconditions
-    assert(list != NULL);
-    assert(film != NULL);
 
-    if (freeFilmList_find(*list, film->name) != NULL)
-        return E_FILM_DUPLICATED;
-
-    tFreeFilmListNode* node = (tFreeFilmListNode*)malloc(sizeof(tFreeFilmListNode));
-    assert(node != NULL);
-
-    node->elem = film; // Store the reference
-    node->next = NULL;
-
-    if (list->first == NULL)
-        list->first = node;
-    else
-        list->last->next = node;
-
-    list->last = node;
-    list->count++;
-
-    return E_SUCCESS;
-}
 
 // Remove a free film from the list
 tApiError freeFilmList_del(tFreeFilmList* list, const char* name) {
@@ -545,4 +522,30 @@ tApiError film_catalog_free(tFilmCatalog* catalog) {
     return E_SUCCESS;
     /////////////////////////////////
     // return E_NOT_IMPLEMENTED;
+}
+
+// Añade una nueva película gratuita a la lista de películas gratuitas
+tApiError freeFilmList_add(tFreeFilmList* list, tFilm* film) {
+    if (list == NULL || film == NULL) {
+        return E_MEMORY_ERROR;
+    }
+
+    tFreeFilmListNode* newNode = (tFreeFilmListNode*)malloc(sizeof(tFreeFilmListNode));
+    if (newNode == NULL) {
+        return E_MEMORY_ERROR;
+    }
+
+    newNode->elem = film;
+    newNode->next = NULL;
+
+    if (list->first == NULL) {
+        list->first = newNode;
+        list->last = newNode;
+    } else {
+        list->last->next = newNode;
+        list->last = newNode;
+    }
+    list->count++;
+
+    return E_SUCCESS;
 }
