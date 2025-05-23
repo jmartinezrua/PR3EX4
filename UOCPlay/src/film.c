@@ -375,11 +375,25 @@ tApiError freeFilmList_SortByYear_Bubble(tFreeFilmList* list) {
 
 // Sort a catalog of films by date
 tApiError filmCatalog_SortByYear(tFilmCatalog* catalog) {
-    /////////////////////////////////
-    // PR3_1e
-    /////////////////////////////////
+    // Check preconditions
+    assert(catalog != NULL);
     
-    return E_NOT_IMPLEMENTED;
+    // Set the sortedByDate flag to true
+    catalog->sortedByDate = true;
+    
+    // Sort the film list by year
+    tApiError error = filmList_SortByYear_Bubble(&catalog->filmList);
+    if (error != E_SUCCESS) {
+        return error;
+    }
+    
+    // Sort the free film list by year
+    error = freeFilmList_SortByYear_Bubble(&catalog->freeFilmList);
+    if (error != E_SUCCESS) {
+        return error;
+    }
+    
+    return E_SUCCESS;
 }
 
 // Return a pointer to the longest film of the catalog
@@ -517,22 +531,16 @@ tApiError freeFilmsList_free(tFreeFilmList* list) {
 
 // Initialize the films catalog
 tApiError film_catalog_init(tFilmCatalog* catalog) {
-    /////////////////////////////////
-    // Ex1 PR1 2a
-    /////////////////////////////////
     // Check preconditions
     assert(catalog != NULL);
     
     filmList_init(&(catalog->filmList));
     freeFilmList_init(&(catalog->freeFilmList));
     
-    /////////////////////////////////
-    // PR3_1e
-    /////////////////////////////////
+    // Initialize sortedByDate flag
+    catalog->sortedByDate = false;
     
     return E_SUCCESS;
-    /////////////////////////////////
-    // return E_NOT_IMPLEMENTED;
 }
 
 // Add a new film to the catalog
