@@ -62,8 +62,8 @@ void person_parse(tPerson* data, tCSVEntry entry) {
     /////////////////////////////////
     // PR3_2a
     /////////////////////////////////
-	data->vipLevel = -1;
-    
+    // Initialize vipLevel to 0
+    data->vipLevel = 0;
 }
 
 // Copy the data from the source to destination
