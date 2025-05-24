@@ -109,8 +109,8 @@ void person_cpy(tPerson* destination, tPerson source) {
     /////////////////////////////////
     // PR3_2b
     /////////////////////////////////
-    
-    destination->vipLevel = -1;
+    // Copy the vipLevel
+    destination->vipLevel = source.vipLevel;
 }
 
 // Remove the data from a person
