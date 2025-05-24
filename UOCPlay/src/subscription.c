@@ -398,16 +398,51 @@ char* popularFilm_find(tSubscriptions data) {
 
 // Return a pointer to the subscriptions of the client with the specified document
 tSubscriptions* subscriptions_findByDocument(tSubscriptions data, char* document) {
-    /////////////////////////////////
-    // PR3_3b
-    /////////////////////////////////
+    // Check preconditions
+    assert(document != NULL);
     
-    /////////////////////////////////
-    // PR3_3d
-    /////////////////////////////////
+    // Allocate memory for the result
+    tSubscriptions* result = (tSubscriptions*)malloc(sizeof(tSubscriptions));
+    assert(result != NULL);
     
-    return NULL;
+    // Initialize the result
+    subscriptions_init(result);
     
+    // If the input data is empty, return an empty result
+    if (data.count == 0) {
+        return result;
+    }
+    
+    // Count how many subscriptions match the document
+    int count = 0;
+    for (int i = 0; i < data.count; i++) {
+        if (strcmp(data.elems[i].document, document) == 0) {
+            count++;
+        }
+    }
+    
+    // If no subscriptions match, return an empty result
+    if (count == 0) {
+        return result;
+    }
+    
+    // Allocate memory for the matching subscriptions
+    result->elems = (tSubscription*)malloc(count * sizeof(tSubscription));
+    assert(result->elems != NULL);
+    
+    // Copy the matching subscriptions
+    int j = 0;
+    for (int i = 0; i < data.count; i++) {
+        if (strcmp(data.elems[i].document, document) == 0) {
+            subscription_cpy(&result->elems[j], data.elems[i]);
+            j++;
+        }
+    }
+    
+    // Set the count
+    result->count = count;
+    
+    return result;
 }
 
 // return a pointer to the subscription with the specified id
