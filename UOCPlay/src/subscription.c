@@ -155,33 +155,34 @@ tApiError subscriptions_add(tSubscriptions* data, tPeople people, tSubscription 
 
 // Remove a subscription
 tApiError subscriptions_del(tSubscriptions* data, int id) {
-    int idx;
-    int i;
+    // Check preconditions
+    assert(data != NULL);
     
-    // Check if an entry with this data already exists
-    idx = subscriptions_find(*data, id);
+    // Find the subscription with the specified ID
+    int idx = subscriptions_find(*data, id);
     
     // If the subscription does not exist, return an error
     if (idx < 0)
         return E_SUBSCRIPTION_NOT_FOUND;
     
+    // Free the watchlist of the subscription to be deleted
+    filmstack_free(&data->elems[idx].watchlist);
+    
     // Shift elements to remove selected
-    for(i = idx; i < data->count-1; i++) {
-            //free watchlist
-            filmstack_free(&data->elems[i].watchlist);
-            // Copy element on position i+1 to position i
-            subscription_cpy(&(data->elems[i]), data->elems[i+1]);
-            
-            /////////////////////////////////
-            // PR3_3e
-            /////////////////////////////////
+    for (int i = idx; i < data->count - 1; i++) {
+        subscription_cpy(&data->elems[i], data->elems[i + 1]);
     }
+    
     // Update the number of elements
-    data->count--;  
-
+    data->count--;
+    
+    // Update the IDs of the remaining subscriptions
+    for (int i = 0; i < data->count; i++)
+        data->elems[i].id = i + 1;
+    
+    // Reallocate memory or free if empty
     if (data->count > 0) {
-        filmstack_free(&data->elems[data->count].watchlist);
-        data->elems = (tSubscription*) realloc(data->elems, data->count * sizeof(tSubscription));
+        data->elems = realloc(data->elems, data->count * sizeof(tSubscription));
         assert(data->elems != NULL);
     } else {
         subscriptions_free(data);
