@@ -119,7 +119,6 @@ int subscriptions_len(tSubscriptions data) {
 
 // Add a new subscription
 tApiError subscriptions_add(tSubscriptions* data, tPeople people, tSubscription subscription) {
-
     // Check input data
     assert(data != NULL);
 
@@ -142,13 +141,13 @@ tApiError subscriptions_add(tSubscriptions* data, tPeople people, tSubscription 
     assert(data->elems != NULL);
     subscription_cpy(&(data->elems[data->count]), subscription);
 
-    /////////////////////////////////
     // Increase the number of elements
     data->count++;
     
-    /////////////////////////////////
-    // PR3_3f
-    /////////////////////////////////
+    // Update the IDs of all subscriptions to be sequential
+    for (int i = 0; i < data->count; i++) {
+        data->elems[i].id = i + 1;
+    }
     
     return E_SUCCESS;
 }
