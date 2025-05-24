@@ -238,22 +238,40 @@ tApiError subscriptions_free(tSubscriptions* data) {
   
 }
 
-// Calculate Vip Level of a person
-int calculate_vipLevel(tSubscriptions* data, char* document) {
-    /////////////////////////////////
-    // PR3_2c
-    /////////////////////////////////
-     
-     return -1;
+// Calculate VIP level based on subscriptions
+int calculate_vipLevel(tSubscriptions* subscriptions, const char* document) {
+    // Check preconditions
+    assert(subscriptions != NULL);
+    assert(document != NULL);
+    
+    // If there are no subscriptions, return 0
+    if (subscriptions->count == 0) {
+        return 0;
+    }
+    
+    // Count the number of subscriptions for this document
+    int count = 0;
+    for (int i = 0; i < subscriptions->count; i++) {
+        if (strcmp(subscriptions->elems[i].document, document) == 0) {
+            count++;
+        }
+    }
+    
+    return count;
 }
 
 // Update the vipLevel of each person 
 tApiError update_vipLevel(tSubscriptions *data, tPeople* people) {
-    /////////////////////////////////
-    // PR3_2d
-    /////////////////////////////////
+    // Check preconditions
+    assert(data != NULL);
+    assert(people != NULL);
     
-    return E_NOT_IMPLEMENTED;
+    // For each person, calculate their VIP level
+    for (int i = 0; i < people->count; i++) {
+        people->elems[i].vipLevel = calculate_vipLevel(data, people->elems[i].document);
+    }
+    
+    return E_SUCCESS;
 }
 
 // Return a pointer to the longest film of the list

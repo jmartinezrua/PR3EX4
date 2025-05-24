@@ -67,8 +67,8 @@ void subscriptions_print(tSubscriptions data);
 // Remove all elements
 tApiError subscriptions_free(tSubscriptions* data);
 
-// Calculate Vip Level of a person
-int calculate_vipLevel(tSubscriptions* data, char* document);
+// Calculate VIP level based on subscriptions
+int calculate_vipLevel(tSubscriptions* subscriptions, const char* document);
 
 // Update the vipLevel of each person 
 tApiError update_vipLevel(tSubscriptions *data, tPeople* people);
