@@ -447,9 +447,19 @@ tSubscriptions* subscriptions_findByDocument(tSubscriptions data, char* document
 
 // return a pointer to the subscription with the specified id
 tSubscription* subscriptions_findHash(tSubscriptions data, int id) {
-    /////////////////////////////////
-    // PR3_3c
-    /////////////////////////////////
+    // Check if the data is empty
+    if (data.count == 0) {
+        return NULL;
+    }
+    
+    // Find the subscription with the specified id
+    for (int i = 0; i < data.count; i++) {
+        if (data.elems[i].id == id) {
+            return &data.elems[i];
+        }
+    }
+    
+    // If no subscription matches, return NULL
     return NULL;
 }
 
