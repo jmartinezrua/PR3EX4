@@ -1,0 +1,256 @@
+Prácticas de Programación 
+PR3 - 20242 
+ 
+Fecha límite de entrega: 30 / 05 / 2025 
+ 
+Formato y fecha de entrega 
+ 
+Hay que entregar la práctica antes del día 30 de mayo 2025 a las 23:59. 
+Se deben entregar los archivos requeridos en la herramienta DSLab dentro del ejercicio PR3. Solo se valorará la última entrega dentro del plazo establecido.  
+Concretamente, en esta actividad se requieren los siguientes archivos: 
+●​ Un fichero README.txt con el siguiente formato (ver ejemplo): 
+
+ 
+ Formato: 
+Correo electrónico UOC 
+Apellidos, Nombre 
+Sistema operativo utilizado 
+ 
+Ejemplo: 
+estudiante1@uoc.edu 
+Apellido1 Apellido2, Nombre 
+Windows 10 
+ 
+
+●​Los ficheros de prueba sin modificaciones. 
+●​Los ficheros *.c y *.h resultantes de los ejercicios realizados. 
+●​Todos los ficheros deben estar dentro de las carpetas correctas (src, test, …). 
+
+ 
+Finalmente, también debe entregarse un documento en formato PDF en el apartado de entregas de EC del aula de teoría que contenga un breve informe (máximo 2 páginas) sobre el código desarrollado. Este informe sólo deberá incluir dos apartados: uno en el que se expliquen las dificultades y problemas encontrados durante el desarrollo, y otro en el que se describan las lecciones aprendidas en esta entrega. 
+ 
+El incumplimiento del formato de entrega especificado anteriormente puede suponer un suspenso de la práctica. 
+Objetivos 
+ 
+●​Saber interpretar y seguir el código de terceras personas. 
+●​Saber compilar proyectos de código organizados en carpetas y librerías. 
+●​Saber implementar un proyecto de código a partir de su especificación. 
+
+ 
+ 
+Criterios de corrección: 
+ 
+Cada ejercicio tiene asociada su puntuación sobre el total de la actividad. Se valorará tanto que las respuestas sean correctas como que también sean completas. 
+●​No seguir el formato de entrega, tanto por lo que se refiere al tipo y nombre de los ficheros como al contenido solicitado, comportará una penalización importante o la cualificación con una D de la actividad. 
+●​El código entregado debe compilar para ser evaluado. Si compila, se valorará: 
+○​Que funcionen tal como se describe en el enunciado. 
+○​Que obtenga el resultado esperado dadas unas condiciones y datos de entrada diseñadas (pruebas proporcionadas). No es necesario pasar todos los tests pero por lo menos debe mostrarse el resultado de estos por pantalla. 
+○​Que se respeten los criterios de estilo y que el código esté  debidamente comentado. Se valorará especialmente el uso de comentarios en inglés. 
+○​Que las estructuras utilizadas sean las correctas. 
+○​Que se separe correctamente la declaración e implementación de las acciones y funciones, utilizando los ficheros correctos. 
+○​El grado de optimización en tiempo y recursos utilizados en la solución entregada. 
+○​Que se realice una gestión de memoria adecuada, liberando la memoria cuando sea necesario. 
+
+
+
+ 
+En esta práctica sólo se podrán modificar los archivos api.h, api.c, film.h, film.c, person.h, person.c, subscription.h and subscription.c, que serán los archivos a subir a la herramienta DSLab. 
+Aviso 
+ 
+Aprovechamos para recordar que está totalmente prohibido copiar en las PECs y prácticas de la asignatura. Se entiende que puede haber un trabajo o comunicación entre los estudiantes durante la realización de la actividad, pero la entrega de esta debe que ser individual y diferenciada del resto. Las entregas serán analizadas con herramientas de detección de plagio. 
+Así pues, las entregas que contengan alguna parte idéntica respecto a entregas de otros estudiantes serán consideradas copias y todos los implicados (sin que sea relevante el vínculo existente entre ellos) suspenderán la actividad entregada. 
+ 
+Guía citación: https://biblioteca.uoc.edu/es/contenidos/Como-citar/index.html  
+Monográfico sobre plagio:  http://biblioteca.uoc.edu/es/biblioguias/biblioguia/Plagio-academico/ 
+ 
+Observaciones 
+ 
+En este documento se utilizan los siguientes símbolos para hacer referencia a los bloques de diseño y programación: 
+ 
+
+Indica que el código mostrado es en lenguaje algorítmico. 
+
+Indica que el código mostrado es en lenguaje C. 
+
+Muestra la ejecución de un programa en lenguaje C. 
+ 
+ 
+ 
+Análisis dinámico 
+ 
+En esta actividad se utiliza memoria dinámica, que requiere que el programador reserve, inicialice y libere la memoria. Para ayudar a detectar memoria que no se ha liberado correctamente, o errores en las operaciones con punteros relacionadas, hay herramientas que ejecutan un análisis dinámico del programa. Una herramienta de código abierto muy empleada es Valgrind (https://valgrind.org/). La utilización de esta herramienta queda fuera del ámbito del curso. 
+ 
+Para entender el significado de los códigos de error, podéis consultar el siguiente enlace, donde encontraréis ejemplos de código que os ayudarán a entender cuando se dan estos errores: 
+ 
+https://bytes.usc.edu/cs104/wiki/valgrind/ 
+ 
+DSLab 
+ 
+En esta práctica, se introduce el uso de la herramienta DSLab (https://sd.uoc.edu/dslab/). Esta herramienta también se utiliza en otras asignaturas y tiene como objetivo: 
+●​Proporcionar un entorno común donde evaluar los ejercicios de codificación. 
+
+Os aconsejamos hacer envíos periódicos a la herramienta de los diferentes ejercicios de código, ya que os permitirá detectar posibles errores antes de la entrega final. Tened en cuenta que es la herramienta utilizada para corregir vuestros códigos, y que no se corregirá ningún código en otro entorno o máquina. Por lo tanto, si vuestro código no funciona en la herramienta DSLab, se considerará que no funciona, aunque lo haga en vuestro ordenador. 
+Recordad que la entrega que se evaluará será la última que hagáis antes de que termine el plazo de entrega en la herramienta DSLab. En cualquier caso, también debéis entregar el informe del código desarrollado en el apartado correspondiente del aula, tal como indica el enunciado. 
+La información básica que os será útil al utilizar DSLab: 
+ 
+●​DSLab considera la entrega correcta únicamente si pasa todos los tests. 
+
+ 
+●​Se muestra un resumen rápido del número de tests pasados. Por norma general, no será necesario pasarlos todos para aprobar la entrega. 
+
+ 
+●​En los detalles se muestra: 
+○​El detalle de los tests pasados y de los que han fallado. 
+○​Es posible descargar un archivo con el texto que el programa muestra en pantalla (salida estándar). Se ha incluido el uso de valgrind en la salida estándar, de modo que en este apartado podréis ver el informe sobre la gestión de la memoria. Es recomendable revisarlo para asegurarse de que se hace un uso correcto de los punteros y de la memoria. 
+
+
+●​También hay un log de ejecución que guarda la evolución de la ejecución del programa. Si, debido a una codificación incorrecta, el programa falla y no es capaz de mostrar el resultado de los tests, se debe revisar este log para determinar en qué punto se interrumpió la ejecución. 
+
+ 
+Nota: si encontráis algún problema con la herramienta DSLab, informad a los profesores para que puedan corregir la incidencia lo antes posible.. 
+ 
+ 
+ 
+Enunciado 
+ 
+El punto de partida de esta práctica es la solución oficial de la PR2. El código base del enunciado incluye todos los archivos necesarios de las actividades anteriores, con los que veréis que todos los tests de la PR1 y la PR2 pasan correctamente. 
+ 
+En esta práctica utilizaremos la estructura de datos planteada en la PR2 con una pequeña adicción en tShowCatalog y en tPerson nos centramos en expandir el código para incorporar métodos de búsqueda y ordenación de los datos. 
+ 
+ 
+
+ 
+ type 
+    tShowCatalog = record 
+        first : pointer to tShowNode; 
+        last : pointer to tShowNode; 
+        count : integer; 
+        sortedByDate: boolean; 
+    end record 
+ 
+    tPerson = record 
+        document : pointer to char; 
+        name : pointer to char; 
+        surname : pointer to char; 
+        phone : pointer to char; 
+        email : pointer to char; 
+        address : pointer to char; 
+        cp : pointer to char; 
+        birthday : tDate; 
+        vipLevel : integer; 
+    end record 
+ 
+end type 
+ 
+ 
+  
+ 
+
+ 
+Ejercicio 1: Búsqueda y ordenación de películas [25%]​​En este ejercicio trabajaremos con el conjunto de películas (film.c y film.h) con el que introdujimos la PR1. 
+ 
+En el fichero film.c implementad: 
+ 
+a)​PR3_1a: El método filmList_longestFind que dada una estructura de tipo tFilmList, devuelva un puntero a la película de máxima duración. Si hay varias películas con la misma duración máxima, devolverá la película con el nombre que aparezca antes en orden alfabético. Si no hay ninguna película en la lista, devolverá NULL. 
+
+ 
+b)​PR3_1b: El método freeFilmList_longestFind que dada una estructura de tipo tFreeFilmList, devuelva un puntero a la película de máxima duración. Si hay varias películas con la misma duración máxima, devolverá la película con el nombre que aparezca antes en orden alfabético. Si no hay ninguna película en la lista, devolverá NULL. 
+c)​PR3_1c: El método filmList_SortByYear_Bubble que dado un puntero a una estructura de tipo tFilmList, ordene la lista mediante ordenamiento de burbuja para que las películas aparezcan de más antigua a más nueva. En caso de tener la misma fecha de emisión, se mostrará primero la película con el nombre que aparezca antes en orden alfabético. El método devuelve E_SUCCESS si finaliza correctamente. 
+i)​Nota: Es recomendable definir alguna función auxiliar para simplificar la implementación del método. 
+
+
+d)​PR3_1d: El método freeFilmList_SortByYear_Bubble que dado un puntero a una estructura de tipo tfreeFilmList, reordene la lista mediante ordenamiento de burbuja para que las películas aparezcan de más antigua a más nueva. En caso de tener la misma fecha de emisión, se mostrará primero la película con el nombre que aparezca antes en orden alfabético. El método devuelve E_SUCCESS si finaliza correctamente. 
+i)​Nota: Es recomendable definir alguna función auxiliar para simplificar la implementación del método. 
+
+
+e)​PR3_1e: El método filmCatalog_SortByYear que dado un puntero a una estructura de tipo tFilmCatalog, reordene el catálogo de manera que tanto la lista de películas como la de películas gratuitas aparezcan ordenadas de más antigua a más nueva. En caso de tener la misma fecha de emisión, se mostrará primero la película con el nombre que aparezca antes en orden alfabético. El método devuelve E_SUCCESS si finaliza correctamente. En la estructura tFilmCatalog actualizad correctamente el nuevo elemento sortedByDate. 
+f)​PR3_1f: El método filmCatalog_OldestFind que dada una estructura de tipo tFilmCatalog, devuelva un puntero a la película más antigua o a la película gratuita más antigua. Si el parámetro free recibido es true, debe devolver la película gratuita más antigua; si es false, la más antigua que no es gratuita. Si hay varias películas con la misma fecha de emisión, devolverá la película con el nombre que aparezca antes en orden alfabético. Si no hay ninguna película en la lista, devolverá NULL. 
+g)​PR3_1g: El método filmCatalog_SortByRating que dado un puntero a una estructura de tipo tFilmCatalog, reordene el catálogo usando el método de selección de manera que tanto la lista de películas como la de películas gratuitas aparezcan ordenadas de mayor a menor puntuación (rating). En caso de tener la misma valoración, se mostrará primero la película con el nombre que aparezca antes en orden alfabético. El método devuelve E_SUCCESS si finaliza correctamente. 
+
+ 
+ 
+Ejercicio 2: Busqueda y ordenación de personas [25%] 
+En este ejercicio trabajaremos con el conjunto de personas (person.c y person.h) y suscripciones (subscription.c y subscription.h). 
+ 
+En el fichero person.c modificad: 
+a)​PR3_2a: El método person_parse para que inicialice el nuevo parámetro vipLevel de tPerson a cero.  
+b)​PR3_2b: El método person_cpy para copiar el valor de vipLevel al realizar las copias. 
+
+En el fichero subscription.c: implementad: 
+c)​PR3_2c: El método calculate_vipLevel que dado un puntero a una estructura de tipo tSubscriptions y un document de un cliente calcule el vipLevel del cliente considerando el precio total de todas las suscripciones del cliente. 
+i)​Nota: El precio (price) de cada tSubscription hay que considerarlo como mensual. 
+ii)​Nota 2: Una vez calculado el precio total de las suscripciones del cliente, el vipLevel aumentará en una unidad por cada €500. Es decir, un cliente con suscripciones cuyo precio total sea €499.99 tendrá nivel 0. Mientras, que un cliente con suscripciones cuyo precio total sea €500 tendrá nivel 1. 
+
+
+d)​PR3_2d: El método update_vipLevel que dado un puntero a una estructura de tipo tPeople y un puntero a una estructura de tipo tSubscriptions actualice el vipLevel de cada persona. El método devuelve E_SUCCESS si finaliza correctamente. 
+
+En el fichero person.c implentad:  
+e)​PR3_2e: El método people_sortByVipLevel_QickSort que dado un puntero a una estructura de tipo tPeople, reordene la lista mediante el método QuickSort para que las las personas aparezcan ordenadas según el vipLevel de mayor a menor, si dos personas tienen el mismo vipLevel, aparecerá primero la que tenga un menor document. El método devuelve E_SUCCESS si finaliza correctamente. 
+i)​Nota: Para implementar el método de QuickSort será necesario definir al menos una función auxiliar para el comportamiento recursivo. 
+
+
+f)​PR3_2f: El método people_sortByDocument_QickSort que dado un puntero a una estructura de tipo tPeople, reordene la lista mediante el método QuickSort para que las las personas aparezcan ordenadas según el document de menor a mayor. El método devuelve E_SUCCESS si finaliza correctamente. 
+i)​Nota: Para implementar el método de QuickSort será necesario definir al menos una función auxiliar para el comportamiento recursivo. 
+
+
+g)​PR3_2g: El método people_findByEmail que dada una estructura de tipo tPeople y un puntero a un email devuelva la posición de la persona con ese email. 
+i)​Nota: En caso de no haber ninguna persona con ese email devolverá -1. En caso de haber múltiples personas asociadas con ese email también devolverá -1. 
+
+
+
+ 
+ 
+Ejercicio 3: Busqueda de subscripciones [25%] 
+En este ejercicio trabajaremos con el conjunto de suscripciones (subscription.c y subscription.h), aunque para la implementación puede que sea necesario modificar otros ficheros dependiendo de cómo estructureis vuestro algoritmo. 
+ 
+En el fichero subscription.c implementad: 
+a)​PR3_3a: El método popularFilm_find que dada una estructura de tipo tSubscriptions, devuelva el nombre de la película que más frecuentemente se encuentra en la pila de seguimiento (tFilmstack). Si hay varias películas con la máxima frecuencia, devolverá la que tenga una fecha de emisión más nueva. Si no hay ninguna película en la lista, devolverá NULL. 
+b)​PR3_3b: El método subscriptions_findByDocument que dada una estructura de tipo tSubscriptions y un document de un cliente, devuelva un puntero a una nueva estructura de tipo tSubscriptions con todas las suscripciones del cliente. 
+i)​Nota: Al crear la estructura de tipo tSubscriptions hay que copiar las pilas de seguimiento (tFilmstack) manteniendo el orden original (de cima a base). 
+ii)​Nota: La estructura devuelva debe estar reservada dinámicamente. 
+
+
+c)​PR3_3c: El método subscriptions_findHash que dada una estructura de tipo tSubscriptions y el id de una suscripción devuelva un puntero a la suscripción. Si la suscripción no existe devuelve NULL. 
+i)​Nota: Observad el id de las suscripciones que usamos en la PR3 (y en las anteriores PR1 y PR2) e implementad el método asumiendo que se va a mantener esa lógica para todas las suscripciones, es decir, que el id de una suscripción coincide con su posición en el array + 1. 
+
+
+
+En el ejercicio PR3_3b se ha implementado la función subscriptions_findByDocument, pero para mantener la lógica del ejercicio anterior de que id como identificador de una tabla hay que modificarlo. Por ello, modificad:  
+d)​PR3_3d: El método subscriptions_findByDocument para que el puntero a la estructura de tipo tSubscriptions que devuelve tenga los id de las suscripciones correctamente. 
+e)​PR3_3e: El método subscriptions_del para que el id de cada subscripción continue representado su posición en la tabla tras una eliminación. Es decir, los id restantes deben ajustarse para mantener una secuencia continua. 
+f)​PR3_3f: El método subscriptions_add para no tener que suponer que suponer que la lógica en la numeración de las id se mantiene, sino para forzar su cumplimiento introduciendo el valor de id correspondiente para cada nueva suscripción. De forma que el id será igual al número total de suscripciones tras la inserción. 
+
+ 
+Ejercicio 4: Integración en la API [25%] 
+Finalmente queremos incorporar los cambios realizados en los ejercicios anteriores en la API, que se encuentra en los ficheros api.h y api.c. Se requiere reutilizar los métodos de los ejercicios anteriores. 
+ 
+En el fichero api.c, modificad: 
+a)​PR3_4a: El método api_addDataEntry para que una dada una estructura de tipo tCSVEntry de tipo ”WATCHLIST” con el formato: 
+
+“FilmName;FilmDuration;FilmGenre;ReleaseDate;Rating;Free;SubscriptionID” 
+Ejemplo: 
+“Interstellar;02:49;4;07/11/2014;4.8;0;1” 
+añada la película a la pila de seguimiento de la suscripción correspondiente. 
+i)​Nota: El formato es el mismo que para las películas (FILM), pero con un elemento adicional al final que hace referencia la id de la suscripción. 
+
+
+b)​PR3_4b: El método api_getLongestFilm que dada una estructura de tipo tApiData, almacene la información de la película de máxima duración en una estructura de tipo tCSVEntry de tipo “FILM” con el formato: 
+
+“FilmName;FilmDuration;FilmGenre;ReleaseDate;Rating;Free” 
+Ejemplo: 
+“Interstellar;02:49;4;07/11/2014;4.8;0” 
+c)​PR3_4c: El método api_getLongestFreeFilm que dada una estructura de tipo tApiData, almacene la información de la película de máxima duración en una estructura de tipo tCSVEntry de tipo “FILM”. 
+d)​PR3_4d: El método api_sortCatalogByYear que dado un puntero a una estructura de tipo tApiData, reordene el catálogo de películas de manera que tanto la lista de películas como la de películas gratuitas aparezcan ordenadas de más antigua a más nueva. En caso de tener la misma fecha de emisión, se mostrará primero la película con un menor nombre. El método devuelve E_SUCCESS si finaliza correctamente. 
+e)​PR3_4e: El método api_getOldestFilm que dada una estructura de tipo tApiData, almacene la información de la a película más antigua o a la película gratuita más antigua dependiendo del booleano free en una estructura de tipo tCSVEntry de tipo “FILM”. 
+f)​PR3_4f: El método api_sortCatalogByRating que dado un puntero a una estructura de tipo tApiData, reordene el catálogo usando el método de selección de manera que tanto la lista de películas como la de películas gratuitas aparezcan ordenadas de mayor a menor puntuación (rating). En caso de tener la misma valoración, se mostrará primero la película con un menor nombre. El método devuelve E_SUCCESS si finaliza correctamente. 
+g)​PR3_4g: El método api_updateVipLevel  que dado un puntero a una estructura de tipo tApiData actualice el vipLevel de cada persona. El método devuelve E_SUCCESS si finaliza correctamente. 
+h)​PR3_4h: El método api_sortPeopleByVipLevel que dado un puntero a una estructura de tipo tApiData, reordene la lista para que las las personas aparezcan ordenadas según el vipLevel de mayor a menor, si dos personas tienen el mismo vipLevel, aparecerá primero la que tenga un menor document. El método devuelve E_SUCCESS si finaliza correctamente. 
+i)​PR3_4i: El método api_sortPeopleByDocument que dado un puntero a una estructura de tipo tApiData, reordene la lista para que las las personas aparezcan ordenadas según el document de menor a mayor. El método devuelve E_SUCCESS si finaliza correctamente. 
+j)​PR3_4j: El método api_getPopularFilm que dada una estructura de tipo tApiData, almacene la información de la película que aparece más frecuentemente en las pilas de seguimientos (tFilmstack) en una estructura de tipo tCSVEntry de tipo “FILM”. 
+k)​PR3_4k: El método api_getSubscriptionsByDocument que dada una estructura de tipo tApiData, guarde los datos de todas las subscripciones en una estructura de tipo tCSVData. Cada suscripción se almacenará en una estructura de tipo tCSVEntry con el mismo formato que en la PR1: 
+
+“id;document;start_date;end_date;plan;price;num_devices” 
+Ejemplo: 
+“1;98765432J;01/01/2025;31/12/2025;Free;0;1” 
+Nota: En este caso nos interesan las suscripciones sin las pilas de seguimiento. 
+
