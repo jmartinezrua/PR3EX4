@@ -6,7 +6,7 @@
 #include <string.h>
 
 // Get the API version information
-const char* api_version()
+const char* api_version() 
 {
     return "UOC PP 20242";
 }
@@ -586,7 +586,21 @@ tApiError api_sortCatalogByYear(tApiData *data) {
     // PR3_4d
     /////////////////////////////////
     
-    return E_NOT_IMPLEMENTED;
+    // Check preconditions
+    assert(data != NULL);
+    
+    // Call the film catalog sort by year function
+    tApiError error = filmCatalog_SortByYear(&data->films);
+    
+    // If successful, update the sortedByDate flag
+    if (error == E_SUCCESS) {
+        data->films.sortedByDate = true;
+    }
+    
+    return error;
+    
+    /////////////////////////////////
+    //return E_NOT_IMPLEMENTED;
 }
 
 // Get longest film
