@@ -548,8 +548,28 @@ tApiError api_getLongestFreeFilm(tApiData data, tCSVEntry *entry) {
     /////////////////////////////////
     // PR3_4c
     /////////////////////////////////
-    
-    return E_NOT_IMPLEMENTED;
+    assert(entry != NULL);
+
+    // If the free film list is empty, return E_SUCCESS and an empty entry
+    if (data.films.freeFilmList.count == 0 || data.films.freeFilmList.first == NULL) {
+        csv_initEntry(entry);
+        return E_SUCCESS;
+    }
+
+    // Find the longest free film
+    tFilm* film = freeFilmList_longestFind(data.films.freeFilmList);
+
+    if (film == NULL) {
+        csv_initEntry(entry);
+        return E_SUCCESS;
+    }
+
+    char buffer[FILE_READ_BUFFER_SIZE];
+    film_get(*film, buffer);
+    csv_initEntry(entry);
+    csv_parseEntry(entry, buffer, "FILM");
+
+    return E_SUCCESS;
 }
 
 // Sort catalog by year, oldest to newest
@@ -558,7 +578,26 @@ tApiError api_sortCatalogByYear(tApiData *data) {
     // PR3_4d
     /////////////////////////////////
     
-    return E_NOT_IMPLEMENTED;
+    // Check preconditions
+    assert(data != NULL);
+    
+    // Call the film catalog sort by year function
+    tApiError result = filmCatalog_SortByYear(&data->films);
+    
+    // Print free films order too
+    if (data->films.freeFilmList.first != NULL) {
+        printf("[DEBUG] COMPLETE FREE FILM ORDER:\n");
+        tFreeFilmListNode* node = data->films.freeFilmList.first;
+        int i = 0;
+        while (node != NULL) {
+            printf("[DEBUG] FREE[%d]: %s (%04d/%02d/%02d)\n", i, node->elem->name, 
+                   node->elem->release.year, node->elem->release.month, node->elem->release.day);
+            node = node->next;
+            i++;
+        }
+    }
+    
+    return result;
 }
 
 // Get longest film
