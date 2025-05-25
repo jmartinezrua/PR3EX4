@@ -634,15 +634,18 @@ tApiError api_getOldestFilm(tApiData data, tCSVEntry *entry, bool free) {
     return E_SUCCESS;
 }
 
-// Sort catalog by rating, higehst to lowest
+// Sort catalog by rating, highest to lowest
 tApiError api_sortCatalogByRating(tApiData *data) {
     /////////////////////////////////
     // PR3_4f
     /////////////////////////////////
     
-    return E_NOT_IMPLEMENTED;
+    // Check preconditions
+    assert(data != NULL);
+    
+    // Call the film catalog sort by rating function
+    return filmCatalog_SortByRating(&data->films);
 }
-
 // updateVipLevel of each person
 tApiError api_updateVipLevel(tApiData *data) {
     /////////////////////////////////
