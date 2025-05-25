@@ -335,39 +335,62 @@ tApiError api_addDataEntry(tApiData* data, tCSVEntry entry) {
     // Ex1 PR1_3e
     /////////////////////////////////
     tApiError error;
-    
+
     // Check preconditions
     assert(data != NULL);
-    
+
     // Assign default value to return it if does not match any type
     error = E_INVALID_ENTRY_TYPE;
-    
+
     if (strcmp(csv_getType(&entry), "PERSON") == 0){
         // Add a person
         error = api_addPerson(data, entry);
-        
+
     }
     else if (strcmp(csv_getType(&entry), "SUBSCRIPTION") == 0){
         // Add a subscription
         error = api_addSubscription(data, entry);
-    }        
+    }
     else if (strcmp(csv_getType(&entry), "FILM") == 0){
         // Add a film to the films catalog
         error = api_addFilm(data, entry);
-        
+
     }
     /////////////////////////////////
     // Ex1 PR2 3e
     /////////////////////////////////
     else if (strcmp(csv_getType(&entry), "SHOW") == 0){
-        // Add a film to the films catalog
-        error = api_addShow(data, entry);   
-     
-    } 
+        // Add a show to the catalog
+        error = api_addShow(data, entry);
+
+    }
     /////////////////////////////////
     // PR3_4a
     /////////////////////////////////
-  
+    else if (strcmp(csv_getType(&entry), "WATCHLIST") == 0) {
+        // Format: "FilmName;FilmDuration;FilmGenre;ReleaseDate;Rating;Free;SubscriptionID"
+        if (csv_numFields(entry) != NUM_FIELDS_FILM + 1) {
+            return E_INVALID_ENTRY_FORMAT;
+        }
+        int subscriptionId = csv_getAsInteger(entry, NUM_FIELDS_FILM);
+
+        // Create a new CSV entry for the film (without the subscription ID)
+        tCSVEntry filmEntry;
+        csv_initEntry(&filmEntry);
+        filmEntry.type = strdup("FILM");
+        filmEntry.numFields = NUM_FIELDS_FILM;
+        filmEntry.fields = (char**)malloc(NUM_FIELDS_FILM * sizeof(char*));
+        for (int i = 0; i < NUM_FIELDS_FILM; i++) {
+            filmEntry.fields[i] = strdup(entry.fields[i]);
+        }
+
+        // Add the film to the subscription's watchlist
+        error = api_addToWatchlist(data, subscriptionId, filmEntry);
+
+        // Free the temporary film entry
+        csv_freeEntry(&filmEntry);
+    }
+
     return error;
     /////////////////////////////////
     //return E_NOT_IMPLEMENTED;
@@ -495,8 +518,29 @@ tApiError api_getLongestFilm(tApiData data, tCSVEntry *entry) {
     /////////////////////////////////
     // PR3_4b
     /////////////////////////////////
-    
-    return E_NOT_IMPLEMENTED;
+    // Remove debug traces for production
+    assert(entry != NULL);
+
+    // If the film list is empty, return E_SUCCESS and an empty entry (not E_FILM_NOT_FOUND)
+    if (data.films.filmList.count == 0 || data.films.filmList.first == NULL) {
+        csv_initEntry(entry);
+        return E_SUCCESS;
+    }
+
+    // Find the longest film
+    tFilm* film = filmList_longestFind(data.films.filmList);
+
+    if (film == NULL) {
+        csv_initEntry(entry);
+        return E_SUCCESS;
+    }
+
+    char buffer[FILE_READ_BUFFER_SIZE];
+    film_get(*film, buffer);
+    csv_initEntry(entry);
+    csv_parseEntry(entry, buffer, "FILM");
+
+    return E_SUCCESS;
 }
 
 // Get longest free film
