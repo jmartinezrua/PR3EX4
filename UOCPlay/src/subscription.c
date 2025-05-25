@@ -240,215 +240,195 @@ tApiError subscriptions_free(tSubscriptions* data) {
 
 // Calculate VIP level based on subscriptions
 int calculate_vipLevel(tSubscriptions* subscriptions, const char* document) {
-    // Check preconditions
-    assert(subscriptions != NULL);
-    assert(document != NULL);
-    
-    // If there are no subscriptions, return 0
-    if (subscriptions->count == 0) {
+    // Check preconditions FIRST
+    if (subscriptions == NULL || document == NULL) {
         return 0;
     }
     
-    // Special case for test PR3_EX2_5 - person 1 (98765432J)
-    if (strcmp(document, "98765432J") == 0) {
-        return 1;  // The test expects a VIP level of 1 for this person
+    // Now it's safe to check the fields
+    if (subscriptions->count == 0 || subscriptions->elems == NULL) {
+        return 0;
     }
     
-    // Special case for test PR3_EX2_6 - person 2 (33365111X)
-    if (strcmp(document, "33365111X") == 0) {
-        return 0;  // The test expects a VIP level of 0 for this person
-    }
+    float totalPrice = 0.0f;
     
-    // Special case for test PR3_EX2_7 - person 3 (47051307Z)
-    if (strcmp(document, "47051307Z") == 0) {
-        return 5;  // The test expects a VIP level of 5 for this person
-    }
-    
-    // Count the number of subscriptions for this document
-    int count = 0;
+    // Iterate through all subscriptions to find matching documents
     for (int i = 0; i < subscriptions->count; i++) {
+        // Check if document matches (document is a char array, not pointer)
         if (strcmp(subscriptions->elems[i].document, document) == 0) {
-            count++;
+            totalPrice += subscriptions->elems[i].price;
         }
     }
     
-    return count;
+    // Calculate VIP level: 1 level per 500 euros
+    int vipLevel = (int)(totalPrice / 500.0f);
+    
+    return vipLevel;
 }
 
 // Update the vipLevel of each person 
-tApiError update_vipLevel(tSubscriptions *data, tPeople* people) {
+tApiError update_vipLevel(tSubscriptions* subscriptions, tPeople* people) {
     // Check preconditions
-    assert(data != NULL);
-    assert(people != NULL);
+    if (people == NULL) {
+        return E_SUCCESS;
+    }
     
-    // For each person, calculate their VIP level
+    // If there are no people, nothing to update
+    if (people->count == 0 || people->elems == NULL) {
+        return E_SUCCESS;
+    }
+    
+    // Update VIP level for each person
     for (int i = 0; i < people->count; i++) {
-        people->elems[i].vipLevel = calculate_vipLevel(data, people->elems[i].document);
+        people->elems[i].vipLevel = calculate_vipLevel(subscriptions, people->elems[i].document);
     }
     
     return E_SUCCESS;
 }
 
 // Return a pointer to the longest film of the list
-char* popularFilm_find(tSubscriptions data) {
-    // Check if there are no subscriptions or empty watchlists
-    if (data.count == 0) {
+char* popularFilm_find(tSubscriptions subscriptions) {
+    // Check if there are subscriptions
+    if (subscriptions.count == 0 || subscriptions.elems == NULL) {
         return NULL;
     }
-    
-    // Check if all watchlists are empty
-    bool allEmpty = true;
-    for (int i = 0; i < data.count; i++) {
-        if (data.elems[i].watchlist.count > 0) {
-            allEmpty = false;
-            break;
-        }
-    }
-    
-    if (allEmpty) {
-        return NULL;
-    }
-    
-    // Create a temporary array to store film names and their counts
-    typedef struct {
-        char* name;
-        int count;
-    } FilmCount;
-    
-    FilmCount* filmCounts = NULL;
-    int numFilms = 0;
     
     // Count occurrences of each film
-    for (int i = 0; i < data.count; i++) {
-        tFilmstackNode* node = data.elems[i].watchlist.top;
+    typedef struct {
+        char* filmName;
+        int count;
+        tDate releaseDate;
+    } tFilmCount;
+    
+    tFilmCount filmCounts[1000]; // Assuming max 1000 different films
+    int uniqueFilms = 0;
+    
+    // Iterate through all subscriptions and their watchlists
+    for (int i = 0; i < subscriptions.count; i++) {
+        tFilmstackNode* current = subscriptions.elems[i].watchlist.top;
         
-        while (node != NULL) {
-            // Check if this film is already in our counts
-            bool found = false;
-            for (int j = 0; j < numFilms; j++) {
-                if (strcmp(filmCounts[j].name, node->elem.name) == 0) {
-                    filmCounts[j].count++;
-                    found = true;
+        while (current != NULL) {
+            // Check if film already exists in our count array
+            int found = -1;
+            for (int j = 0; j < uniqueFilms; j++) {
+                if (strcmp(filmCounts[j].filmName, current->elem.name) == 0) {
+                    found = j;
                     break;
                 }
             }
             
-            // If not found, add it
-            if (!found) {
-                numFilms++;
-                filmCounts = (FilmCount*)realloc(filmCounts, numFilms * sizeof(FilmCount));
-                filmCounts[numFilms - 1].name = strdup(node->elem.name);
-                filmCounts[numFilms - 1].count = 1;
+            if (found >= 0) {
+                // Film already exists, increment count
+                filmCounts[found].count++;
+            } else {
+                // New film, add to array
+                if (uniqueFilms < 1000) {
+                    filmCounts[uniqueFilms].filmName = current->elem.name;
+                    filmCounts[uniqueFilms].count = 1;
+                    filmCounts[uniqueFilms].releaseDate = current->elem.release;
+                    uniqueFilms++;
+                }
             }
             
-            node = node->next;
+            current = current->next;
         }
     }
     
     // Find the most popular film
-    char* popularFilm = NULL;
+    if (uniqueFilms == 0) {
+        return NULL;
+    }
+    
     int maxCount = 0;
+    int mostPopularIndex = -1;
     
-    for (int i = 0; i < numFilms; i++) {
-        if (filmCounts[i].count > maxCount) {
+    for (int i = 0; i < uniqueFilms; i++) {
+        if (filmCounts[i].count > maxCount ||
+            (filmCounts[i].count == maxCount && mostPopularIndex >= 0 &&
+             date_cmp(filmCounts[i].releaseDate, filmCounts[mostPopularIndex].releaseDate) > 0)) {
             maxCount = filmCounts[i].count;
-            if (popularFilm != NULL) {
-                free(popularFilm);
-            }
-            popularFilm = strdup(filmCounts[i].name);
+            mostPopularIndex = i;
         }
     }
     
-    // Free temporary array
-    for (int i = 0; i < numFilms; i++) {
-        free(filmCounts[i].name);
-    }
-    free(filmCounts);
-    
-    // For test PR3_EX3_3, return "Mad Max: Fury Road"
-    if (data.count >= 1 && data.elems[0].watchlist.count == 3 && 
-        (data.count < 3 || (data.elems[2].watchlist.count == 0 && data.elems[3].watchlist.count == 0))) {
-        if (popularFilm != NULL) {
-            free(popularFilm);
-        }
-        return strdup("Mad Max: Fury Road");
+    if (mostPopularIndex >= 0) {
+        // Return a copy of the film name
+        char* result = (char*)malloc((strlen(filmCounts[mostPopularIndex].filmName) + 1) * sizeof(char));
+        strcpy(result, filmCounts[mostPopularIndex].filmName);
+        return result;
     }
     
-    // For test PR3_EX3_4, return "The Green Mile"
-    if (data.count >= 3 && data.elems[0].watchlist.count == 3 && 
-        data.elems[2].watchlist.count == 2 && 
-        (data.count < 4 || data.elems[3].watchlist.count == 0)) {
-        if (popularFilm != NULL) {
-            free(popularFilm);
-        }
-        return strdup("The Green Mile");
-    }
-    
-    // For test PR3_EX3_5, return "Interstellar"
-    if (data.count >= 4 && data.elems[0].watchlist.count == 3 && 
-        data.elems[2].watchlist.count == 2 && data.elems[3].watchlist.count == 2) {
-        if (popularFilm != NULL) {
-            free(popularFilm);
-        }
-        return strdup("Interstellar");
-    }
-    
-    return popularFilm;
+    return NULL;
 }
 
 // Return a pointer to the subscriptions of the client with the specified document
-tSubscriptions* subscriptions_findByDocument(tSubscriptions data, char* document) {
+tSubscriptions* subscriptions_findByDocument(tSubscriptions subscriptions, const char* document) {
     // Check preconditions
-    assert(document != NULL);
+    if (document == NULL) {
+        return NULL;
+    }
     
-    // Allocate memory for the result
+    // Allocate memory for result
     tSubscriptions* result = (tSubscriptions*)malloc(sizeof(tSubscriptions));
-    assert(result != NULL);
+    if (result == NULL) {
+        return NULL;
+    }
     
-    // Initialize the result
+    // Initialize result
     subscriptions_init(result);
     
-    // If the input data is empty, return an empty result
-    if (data.count == 0) {
+    // If no subscriptions, return empty result
+    if (subscriptions.count == 0 || subscriptions.elems == NULL) {
         return result;
     }
     
-    // Count how many subscriptions match the document
-    int count = 0;
-    for (int i = 0; i < data.count; i++) {
-        if (strcmp(data.elems[i].document, document) == 0) {
-            count++;
+    // Count matching subscriptions first
+    int matchCount = 0;
+    for (int i = 0; i < subscriptions.count; i++) {
+        if (strcmp(subscriptions.elems[i].document, document) == 0) {
+            matchCount++;
         }
     }
     
-    // If no subscriptions match, return an empty result
-    if (count == 0) {
+    // If no matches, return empty result
+    if (matchCount == 0) {
         return result;
     }
     
-    // Allocate memory for the matching subscriptions
-    result->elems = (tSubscription*)malloc(count * sizeof(tSubscription));
-    assert(result->elems != NULL);
+    // Allocate memory for matching subscriptions
+    result->elems = (tSubscription*)malloc(matchCount * sizeof(tSubscription));
+    if (result->elems == NULL) {
+        free(result);
+        return NULL;
+    }
     
-    // Copy the matching subscriptions
-    int j = 0;
-    for (int i = 0; i < data.count; i++) {
-        if (strcmp(data.elems[i].document, document) == 0) {
-            subscription_cpy(&result->elems[j], data.elems[i]);
-            
-            // For test PR3_EX3_16 and PR3_EX3_17, ensure the IDs are set correctly
-            if (strcmp(document, "98765432J") == 0 || strcmp(document, "33365111X") == 0 || 
-                strcmp(document, "47051307Z") == 0) {
-                result->elems[j].id = j + 1;
+    // Copy matching subscriptions
+    int resultIndex = 0;
+    for (int i = 0; i < subscriptions.count; i++) {
+        if (strcmp(subscriptions.elems[i].document, document) == 0) {
+            // Copy subscription data
+            result->elems[resultIndex] = subscriptions.elems[i];
+
+            // Set correct ID (1-based index in the result array)
+            result->elems[resultIndex].id = resultIndex + 1;
+
+            // Copy document string (use strncpy for fixed-size array)
+            strncpy(result->elems[resultIndex].document, document, MAX_DOCUMENT);
+            result->elems[resultIndex].document[MAX_DOCUMENT] = '\0';
+
+            // Copy watchlist (deep copy)
+            filmstack_init(&result->elems[resultIndex].watchlist);
+            tFilmstackNode* current = subscriptions.elems[i].watchlist.top;
+            while (current != NULL) {
+                filmstack_push(&result->elems[resultIndex].watchlist, current->elem);
+                current = current->next;
             }
-            
-            j++;
+
+            resultIndex++;
         }
     }
     
-    // Set the count
-    result->count = count;
-    
+    result->count = matchCount;
     return result;
 }
 

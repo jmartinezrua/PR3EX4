@@ -606,22 +606,56 @@ tApiError api_sortCatalogByYear(tApiData *data) {
     //return E_NOT_IMPLEMENTED;
 }
 
-// Get longest film
+// Get oldest film
 tApiError api_getOldestFilm(tApiData data, tCSVEntry *entry, bool free) {
     /////////////////////////////////
     // PR3_4e
     /////////////////////////////////
     
-    return E_NOT_IMPLEMENTED;
+    // Check preconditions
+    assert(entry != NULL);
+    
+    // Initialize the output entry
+    csv_initEntry(entry);
+    
+    // Check if catalog is empty - return E_SUCCESS with empty entry
+    if (data.films.filmList.first == NULL) {
+        return E_SUCCESS;
+    }
+    
+    // Find the oldest film
+    tFilm* oldestFilm = filmCatalog_OldestFind(data.films, free);
+    
+    if (oldestFilm == NULL) {
+        return E_SUCCESS; // Return success even if no film found
+    }
+    
+    // Convert film to CSV entry
+    char buffer[FILE_READ_BUFFER_SIZE];
+    film_get(*oldestFilm, buffer);
+    csv_parseEntry(entry, buffer, "FILM");
+    
+    return E_SUCCESS;
 }
 
-// Sort catalog by rating, higehst to lowest
+// Sort catalog by rating, highest to lowest
 tApiError api_sortCatalogByRating(tApiData *data) {
     /////////////////////////////////
     // PR3_4f
     /////////////////////////////////
     
-    return E_NOT_IMPLEMENTED;
+    // Check preconditions
+    assert(data != NULL);
+    
+    // Call the film catalog sort by rating function
+    tApiError error = filmCatalog_SortByRating(&data->films);
+    
+    // Reset sortedByDate flag since we're sorting by rating now
+    if (error == E_SUCCESS) {
+        data->films.sortedByDate = false;
+    }
+    
+    return error;
 }
 
 // updateVipLevel of each person
@@ -629,18 +663,25 @@ tApiError api_updateVipLevel(tApiData *data) {
     /////////////////////////////////
     // PR3_4g
     /////////////////////////////////
-
-    return E_NOT_IMPLEMENTED;
+    
+    // Check preconditions
+    assert(data != NULL);
+    
+    // Call the update VIP level function with correct parameter order
+    return update_vipLevel(&data->subscriptions, &data->people);
 }
 
-// Sort people by VIP level, higehst to lowest
+// Sort people by VIP level, highest to lowest
 tApiError api_sortPeopleByVipLevel(tApiData *data) {
     /////////////////////////////////
     // PR3_4h
     /////////////////////////////////
     
-    return E_NOT_IMPLEMENTED;
+    // Check preconditions
+    assert(data != NULL);
     
+    // Call the people sort by VIP level function
+    return people_sortByVipLevel_QickSort(&data->people);
 }
 
 // Sort people by document, lowest to highest
@@ -648,8 +689,12 @@ tApiError api_sortPeopleByDocument(tApiData *data) {
     /////////////////////////////////
     // PR3_4i
     /////////////////////////////////
-
-    return E_NOT_IMPLEMENTED;
+    
+    // Check preconditions
+    assert(data != NULL);
+    
+    // Call the people sort by document function
+    return people_sortByDocument_QickSort(&data->people);
 }
 
 // Get popular film
@@ -658,14 +703,74 @@ tApiError api_getPopularFilm(tApiData data, tCSVEntry *entry) {
     // PR3_4j
     /////////////////////////////////
     
-    return E_NOT_IMPLEMENTED;
+    // Check preconditions
+    assert(entry != NULL);
+    
+    // Initialize the output entry
+    csv_initEntry(entry);
+    
+    // Check if there are subscriptions
+    if (data.subscriptions.count == 0) {
+        return E_SUCCESS; // Return success with empty entry
+    }
+    
+    // Find the most popular film
+    char* popularFilmName = popularFilm_find(data.subscriptions);
+    
+    if (popularFilmName == NULL) {
+        return E_SUCCESS; // Return success even if no film found
+    }
+    
+    // Find the film in the catalog to get full details
+    tFilm* film = filmList_find(data.films.filmList, popularFilmName);
+    
+    if (film != NULL) {
+        // Convert film to CSV entry
+        char buffer[FILE_READ_BUFFER_SIZE];
+        film_get(*film, buffer);
+        csv_parseEntry(entry, buffer, "FILM");
+    }
+    
+    // Free the allocated film name
+    free(popularFilmName);
+    
+    return E_SUCCESS;
 }
 
 // Get subscription data for the specified document
-tApiError api_getSubscriptionsByDocument(tApiData data, char *name, tCSVData *csvData) {
+tApiError api_getSubscriptionsByDocument(tApiData data, char *document, tCSVData *csvData) {
     /////////////////////////////////
     // PR3_4k
     /////////////////////////////////
-
-    return E_NOT_IMPLEMENTED;
+    
+    // Check preconditions
+    assert(document != NULL);
+    assert(csvData != NULL);
+    
+    // Initialize the output CSV data
+    csv_init(csvData);
+    
+    // Find subscriptions by document
+    tSubscriptions* foundSubscriptions = subscriptions_findByDocument(data.subscriptions, document);
+    
+    if (foundSubscriptions == NULL || foundSubscriptions->count == 0) {
+        if (foundSubscriptions != NULL) {
+            subscriptions_free(foundSubscriptions);
+            free(foundSubscriptions);
+        }
+        return E_SUCCESS; // Return success with empty data
+    }
+    
+    // Convert each subscription to CSV entry
+    for (int i = 0; i < foundSubscriptions->count; i++) {
+        char buffer[FILE_READ_BUFFER_SIZE];
+        subscription_get(foundSubscriptions->elems[i], buffer);
+        csv_addStrEntry(csvData, buffer, "SUBSCRIPTION");
+    }
+    
+    // Free the allocated subscriptions structure
+    subscriptions_free(foundSubscriptions);
+    free(foundSubscriptions);
+    
+    return E_SUCCESS;
 }

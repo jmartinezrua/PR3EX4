@@ -1,9 +1,8 @@
+#include "film.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-#include "film.h"
-#include "error.h"
 
 // Initialize a film
 void film_init(tFilm* data, const char* name, tTime duration, tFilmGenre genre, tDate release, float rating, bool isFree) {

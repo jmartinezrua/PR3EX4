@@ -71,13 +71,13 @@ tApiError subscriptions_free(tSubscriptions* data);
 int calculate_vipLevel(tSubscriptions* subscriptions, const char* document);
 
 // Update the vipLevel of each person 
-tApiError update_vipLevel(tSubscriptions *data, tPeople* people);
+tApiError update_vipLevel(tSubscriptions* subscriptions, tPeople* people);
 
 // Return a pointer to the longest film of the list
 char* popularFilm_find(tSubscriptions data);
 
 // Return a pointer to the subscriptions of the client with the specified document
-tSubscriptions* subscriptions_findByDocument(tSubscriptions data, char* document);
+tSubscriptions* subscriptions_findByDocument(tSubscriptions subscriptions, const char* document);
 
 // return a pointer to the subscription with the specified id
 tSubscription* subscriptions_findHash(tSubscriptions data, int id);
