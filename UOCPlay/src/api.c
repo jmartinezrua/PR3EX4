@@ -600,13 +600,38 @@ tApiError api_sortCatalogByYear(tApiData *data) {
     return result;
 }
 
-// Get longest film
+// Get oldest film
 tApiError api_getOldestFilm(tApiData data, tCSVEntry *entry, bool free) {
     /////////////////////////////////
     // PR3_4e
     /////////////////////////////////
     
-    return E_NOT_IMPLEMENTED;
+    // Check preconditions
+    assert(entry != NULL);
+    
+    // Initialize the output entry
+    csv_initEntry(entry);
+    
+    // Check if catalog is empty
+    if ((free && data.films.freeFilmList.count == 0) || 
+        (!free && data.films.filmList.count == 0)) {
+        // For empty catalog, return E_SUCCESS with empty entry
+        return E_SUCCESS;
+    }
+    
+    // Find the oldest film
+    tFilm* oldestFilm = filmCatalog_OldestFind(data.films, free);
+    
+    if (oldestFilm == NULL) {
+        return E_SUCCESS; // Return success even if no film found
+    }
+    
+    // Convert film to CSV entry
+    char buffer[FILE_READ_BUFFER_SIZE];
+    film_get(*oldestFilm, buffer);
+    csv_parseEntry(entry, buffer, "FILM");
+    
+    return E_SUCCESS;
 }
 
 // Sort catalog by rating, higehst to lowest
