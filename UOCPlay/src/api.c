@@ -66,7 +66,6 @@ tApiError api_loadData(tApiData* data, const char* filename, bool reset)
     
     return E_SUCCESS;
 }
-
 // Initialize the data structure
 tApiError api_initData(tApiData* data) {
     /////////////////////////////////
@@ -592,9 +591,13 @@ tApiError api_sortCatalogByYear(tApiData *data) {
     // Call the film catalog sort by year function
     tApiError error = filmCatalog_SortByYear(&data->films);
     
+    // The sortedByDate flag is set inside filmCatalog_SortByYear
+    
     // If successful, update the sortedByDate flag
     if (error == E_SUCCESS) {
-        data->films.sortedByDate = true;
+    }
+    
+    if (error == E_SUCCESS) {
     }
     
     return error;
