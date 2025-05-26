@@ -548,8 +548,28 @@ tApiError api_getLongestFreeFilm(tApiData data, tCSVEntry *entry) {
     /////////////////////////////////
     // PR3_4c
     /////////////////////////////////
-    
-    return E_NOT_IMPLEMENTED;
+    assert(entry != NULL);
+
+    // If the free film list is empty, return E_SUCCESS and an empty entry (not E_FILM_NOT_FOUND)
+    if (data.films.freeFilmList.count == 0 || data.films.freeFilmList.first == NULL) {
+        csv_initEntry(entry);
+        return E_SUCCESS;
+    }
+
+    // Find the longest free film
+    tFilm* film = freeFilmList_longestFind(data.films.freeFilmList);
+
+    if (film == NULL) {
+        csv_initEntry(entry);
+        return E_SUCCESS;
+    }
+
+    char buffer[FILE_READ_BUFFER_SIZE];
+    film_get(*film, buffer);
+    csv_initEntry(entry);
+    csv_parseEntry(entry, buffer, "FILM");
+
+    return E_SUCCESS;
 }
 
 // Sort catalog by year, oldest to newest
